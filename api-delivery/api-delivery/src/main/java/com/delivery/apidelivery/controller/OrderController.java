@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-
+@RequestMapping("/delivery")
 public class OrderController {
     private final OrderService orderService;
 
@@ -19,13 +19,13 @@ public class OrderController {
     }
 
     //VER MENÚ
-
+    @GetMapping("/menu")
     public ResponseEntity<List<Food>> getMenu(){
         return ResponseEntity.ok(this.orderService.showMenu());
     }
 
     //AGREGAR COMIDA
-
+    @PostMapping("/menu")
     public ResponseEntity<Food> agregarComida(int num){
         Food food= this.orderService.showMenu().get(num);
         this.orderService.addFood(food);
@@ -33,7 +33,7 @@ public class OrderController {
     }
 
     //HACER PEDIDO
-
+    @PostMapping("/menu/order")
     public ResponseEntity<Order> realizarOrden(String id, String customerName, String customerEmail){
         this.orderService.makeOrder(id, customerName, customerEmail);
         this.orderService.limpiarLista();
@@ -41,14 +41,14 @@ public class OrderController {
     }
 
     //VER ÓRDENES
-
+    @GetMapping("/orders")
     public ResponseEntity<List<Order>> getOrders(){
         return ResponseEntity.ok(this.orderService.showOrders());
     }
 
     //VER UNA ORDEN
-
-    public ResponseEntity<Order> getOrder(String id){
+    @GetMapping("/orders/{id}")
+    public ResponseEntity<Order> getOrder(@PathVariable String id){
         Optional<Order> optionalOrder= this.orderService.searchOrder(id);
         if(optionalOrder.isPresent())
             return ResponseEntity.ok(optionalOrder.get());
@@ -56,8 +56,8 @@ public class OrderController {
     }
 
     //CALCULAR TOTAL
-
-    public ResponseEntity<String> calcularTotal(String id){
+    @GetMapping("/orders/{id}/total")
+    public ResponseEntity<String> calcularTotal(@PathVariable String id){
         Optional<Order> optionalOrder= this.orderService.searchOrder(id);
         if(optionalOrder.isPresent())
             return ResponseEntity.ok(optionalOrder.get().calculateTotal());
@@ -65,8 +65,8 @@ public class OrderController {
     }
 
     //RECIBIR ACTUALIZACIÓN DEL PEDIDO
-
-    public ResponseEntity<String> actualizacion(String id){
+    @GetMapping("/orders/{id}/estado")
+    public ResponseEntity<String> actualizacion(@PathVariable String id){
         Optional<Order> optionalOrder= this.orderService.searchOrder(id);
         if(optionalOrder.isPresent())
             return ResponseEntity.ok(optionalOrder.get().update());
